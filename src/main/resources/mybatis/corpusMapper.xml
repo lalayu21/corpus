@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.CorpusDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<!-- 插入熟语料库 -->
+	<!-- <insert id="insertYes" parameterType="com.corpus.entity.Corpus" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		insert into corpus(name, type, labelResult, labelType, wavePath, labelPath, ratio, channel, desp, head, encode, mfcc, plp, fbank) 
+			values(#{name}, #{type}, #{labelResult}, #{labelType}, #{wavePath}, #{labelPath}, #{ratio}, #{channel}, #{desp}, #{head}, #{encode}, #{mfcc}, #{plp}, #{fbank})
+	</insert> -->
+	
+	<insert id="insertYes" parameterType="Corpus" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		insert into corpus(name, type, labelType, wavePath, labelPath, desp, context, gender, speaker, language, effective) 
+			values(#{name}, #{type}, #{labelType}, #{wavePath}, #{labelPath}, #{desp}, #{context}, #{gender}, #{speaker}, #{language}, #{effective})
+	</insert>
+	
+	<!-- 插入生语料库 -->
+	<insert id="insertNo" parameterType="Corpus" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		insert into corpus(name, type, wavePath, radio, desp) 
+			values(#{name}, #{type}, #{wavePath}, #{radio}， #{desp})
+	</insert>
+	
+	<!-- 根据语料库名称查语料库名称 -->
+	<select id="selectNameByName" parameterType="String" resultType="String">
+		select name from corpus where name = #{name}
+	</select>
+	<select id="selectNameById" parameterType="int" resultType="String">
+		select name from corpus where id = #{id}
+	</select>
+	
+	
+	<select id="selectTimeById" parameterType="int" resultType="double">
+		select time from corpus where id = #{id}
+	</select>
+	
+	<update id="updateTimeById" parameterType="Corpus">
+		update corpus set time = #{time} where id = #{id}
+	</update>
+	
+	<!-- 查询所有语料库的所有信息 -->
+	
+	<select id="selectAll" resultType="Corpus">
+		select * from corpus
+	</select>
+	<select id="selectCorpusByType" parameterType="int" resultType="Corpus">
+		select * from corpus where type = #{flag}
+	</select>
+	<select id="selectCorpusByLabelType" parameterType="string" resultType="Corpus">
+		select * from corpus where ${_parameter}
+	</select>
+	<!-- <select id="selectCorpusByGender" resultType="Corpus">
+		select * from corpus where gender = 1
+	</select>
+	<select id="selectCorpusByLanguage" resultType="Corpus">
+		select * from corpus where language = 1
+	</select>
+	<select id="selectCorpusByPerson" resultType="Corpus">
+		select * from corpus where speaker = 1
+	</select>
+	<select id="selectCorpusByEffective" resultType="Corpus">
+		select * from corpus where effective = 1
+	</select> -->
+	
+	
+	<select id="selectCorpusByInput" parameterType="string" resultType="Corpus">
+		${_parameter}
+		<!-- select * from corpus where type = 1 and name like #{input}
+		union
+		select * from corpus where type = 1 and desp like #{input} -->
+	</select>
+	<!-- <select id="selectCorpusByContextInput" parameterType="string" resultType="Corpus">
+		select * from corpus where context = 1 and name like #{input}
+		union
+		select * from corpus where context = 1 and desp like #{input}
+	</select>
+	<select id="selectCorpusByGenderInput" parameterType="string" resultType="Corpus">
+		select * from corpus where gender = 1 and name like #{input}
+		union
+		select * from corpus where gender = 1 and desp like #{input}
+	</select>
+	<select id="selectCorpusByLanguageInput" parameterType="string" resultType="Corpus">
+		select * from corpus where language = 1 and name like #{input}
+		union
+		select * from corpus where language = 1 and desp like #{input}
+	</select>
+	<select id="selectCorpusByPersonInput" parameterType="string" resultType="Corpus">
+		select * from corpus where speaker = 1 and name like #{input}
+		union
+		select * from corpus where speaker = 1 and desp like #{input}
+	</select>
+	<select id="selectCorpusByEffectiveInput" parameterType="string" resultType="Corpus">
+		select * from corpus where effective = 1 and name like #{input}
+		union
+		select * from corpus where effective = 1 and desp like #{input}
+	</select> -->
+	
+	<!-- 根据id查语料库名称 -->
+	<select id="selectAllById" parameterType="int" resultType="Corpus">
+		select name, type, labelType, wavePath, labelPath, desp, context, gender, speaker, language, effective from corpus where id = #{id}
+	</select>
+	
+	<select id="selectCountByCorpusInWavetagger" parameterType="int" resultType="WaveList">
+		select id from wavetagger where corpus = #{id}
+	</select>
+	
+	<select id="selectCountByCorpusInPraat" parameterType="int" resultType="WaveList">
+		select id from wave where corpus =  #{id}
+	</select>
+	
+	
+	
+	<!-- 根据名称模糊查找语料库 -->
+	<select id="selectByName" parameterType="String" resultType="Corpus">
+		select * from corpus where name like '%${name}%'
+	</select>
+	
+	<!-- 根据名称模糊查找语料库 -->
+	<select id="selectIdByName" parameterType="String" resultType="int">
+		select id from corpus where name = #{name}
+	</select>
+	
+	<!-- 根据类型查找语料库 -->
+	<select id="selectByType" parameterType="int" resultType="Corpus">
+		select * from corpus where type = #{type}
+	</select>
+	
+	<!-- 根据labelType查找语料库 -->
+	<select id="selectByLabelType" parameterType="int" resultType="Corpus">
+		select * from corpus where labelType = #{labelType}
+	</select>
+	
+	<!-- 根据labelResult查找语料库 -->
+	<select id="selectByLabelResult" parameterType="String" resultType="Corpus">
+		select * from corpus where labelResult like '%${labelResult}%'
+	</select>
+	
+	<!-- 根据ratio查找语料库 -->
+	<!-- <select id="selectByRatio" parameterType="int" resultType="Corpus">
+		select * from corpus where ratio = #{ratio}
+	</select> -->
+	
+	<!-- 根据channel查找语料库 -->
+	<select id="selectByChannel" parameterType="int" resultType="Corpus">
+		select * from corpus where channel = #{channel}
+	</select>
+	
+	<!-- 根据head查找语料库 -->
+	<select id="selectByHead" parameterType="int" resultType="Corpus">
+		select * from corpus where head = #{head}
+	</select>
+	
+	<!-- 根据encode查找语料库 -->
+	<select id="selectByEncode" parameterType="int" resultType="Corpus">
+		select * from corpus where encode = #{encode}
+	</select>
+	
+	<!-- 根据id查找corpus的格式 -->
+	<select id="selectFmtById" parameterType="int" resultType="CorpusFmt">
+		select code, head, channel, sample, bitpersamples from corpusFmt where corpus = #{corpus}
+	</select>
+	
+	<!-- 根据id查找praat标注的某一项的总时间 -->
+	<select id="selectTimeFmtById" parameterType="string" resultType="double">
+	${_parameter}
+		<!-- select context from corpusFmt where corpus = #{corpus} -->
+	</select>
+	<!-- <select id="selectTimeFmtByIdGender" parameterType="Wave" resultType="double">
+		select gender from corpusFmt where corpus = #{corpus}
+	</select>
+	<select id="selectTimeFmtByIdSpeaker" parameterType="Wave" resultType="double">
+		select speaker from corpusFmt where corpus = #{corpus}
+	</select>
+	<select id="selectTimeFmtByIdLanguage" parameterType="Wave" resultType="double">
+		select language from corpusFmt where corpus = #{corpus}
+	</select>
+	<select id="selectTimeFmtByIdEffective" parameterType="Wave" resultType="double">
+		select effective from corpusFmt where corpus = #{corpus}
+	</select> -->
+	
+	<!-- 根据id查找wavePath -->
+	<select id="selectWavePathById" parameterType="int" resultType="string">
+		select wavePath from corpus where id = #{id}
+	</select>
+	
+	<!-- 将语料库中的音频和标注文件的路径插入ip表中 -->
+	<insert id="insert2ip" parameterType="Corpus" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		insert into ip(ip, username, password, corpus, fileType) 
+		values(#{ip}, #{username}, #{password}, #{id}, #{fileType})
+	</insert>
+	
+	<!-- 从ip表中查询ip、username、password -->
+	<select id="selectIp" parameterType="Corpus" resultType="Corpus">
+		select ip, username, password from ip where corpus = #{id} and fileType = #{fileType}
+	</select>
+	
+	<!-- 更新语料库的完成状态 -->
+	<update id="updateCorpusFlag" parameterType="corpus">
+		update corpus set flag = #{flag} where id = #{id}
+	</update>
+</mapper> 

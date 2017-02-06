@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.WaveDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	<!-- 将praat标注中的音频每条总时长存入数据库wave表中 -->
+	<update id="updateTimeById" parameterType="Wave">
+		update wave set ${_parameter}
+	</update>
+	<!-- <update id="updateTimeByIdGnder" parameterType="Wave">
+		update wave set gender = #{time} where id = ${id}
+	</update>
+	<update id="updateTimeByIdLanguage" parameterType="Wave">
+		update wave set language = #{time} where id = ${id}
+	</update>
+	<update id="updateTimeByIdSpeaker" parameterType="Wave">
+		update wave set speaker = #{time} where id = ${id}
+	</update>
+	<update id="updateTimeByIdEffective" parameterType="Wave">
+		update wave set effective = #{time} where id = ${id}
+	</update> -->
+	
+	<select id="selectTimeById" parameterType="string" resultType="double">
+		${_parameter}
+		<!-- select context from wave where corpus = #{corpus} -->
+	</select>
+	<!-- <select id="selectTimeByIdGender" parameterType="Wave" resultType="double">
+		select gender from wave where corpus = #{corpus}
+	</select>
+	<select id="selectTimeByIdLanguage" parameterType="Wave" resultType="double">
+		select language from wave where corpus = #{corpus}
+	</select>
+	<select id="selectTimeByIdSpeaker" parameterType="Wave" resultType="double">
+		select speaker from wave where corpus = #{corpus}
+	</select>
+	<select id="selectTimeByIdEffective" parameterType="Wave" resultType="double">
+		select effective from wave where corpus = #{corpus}
+	</select> -->
+	
+	
+	<select id="selectTimeByTypeAndId" parameterType="string" resultType="double">
+	${_parameter}
+		<!-- select context from wave where id = #{id} -->
+	</select>
+	<!-- <select id="selectTimeByTypeAndIdGender" parameterType="Wave" resultType="double">
+		select gender from wave where id = #{id}
+	</select>
+	<select id="selectTimeByTypeAndIdLanguage" parameterType="Wave" resultType="double">
+		select language from wave where id = #{id}
+	</select>
+	<select id="selectTimeByTypeAndIdSpeaker" parameterType="Wave" resultType="double">
+		select speaker from wave where id = #{id}
+	</select>
+	<select id="selectTimeByTypeAndIdEffective" parameterType="Wave" resultType="double">
+		select effective from wave where id = #{id}
+	</select> -->
+	
+	<!-- 根据corpusID和wave获取id -->
+	<select id="selectIdByCorpusAndWave" parameterType="Wave" resultType="int">
+		select id from wave where corpus = #{corpus} and wave = #{wave}
+	</select>
+	
+	<!-- 根据corpusID和wave获取id的个数 -->
+	<select id="selectCountByCorpusAndWave" parameterType="Wave" resultType="int">
+		select count(id) from wave where corpus = #{corpus} and wave = #{wave}
+	</select>
+	
+	
+	<!-- 删除数据库中指定的音频 -->
+	<delete id="deleteWavePraat" parameterType="int">
+		delete from praat where id = #{id}
+	</delete>
+	<delete id="deleteWaveWavetagger" parameterType="int">
+		delete from wavetagger where id = #{id}
+	</delete>
+	<delete id="deleteWaveFile" parameterType="int">
+		delete from file where id = #{id}
+	</delete>
+	
+</mapper> 

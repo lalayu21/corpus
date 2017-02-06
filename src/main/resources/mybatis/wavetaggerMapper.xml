@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.WavetaggerDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<!-- 插入熟语音频数据-->
+	<insert id="insertWave" parameterType="WavetaggerWave" keyProperty="id">
+		insert into wavetagger(wave, context, other, starttime, endtime, corpus, length, time) 
+		values(#{wave}, #{context}, #{other}, #{starttime}, #{endtime}, #{corpus}, #{length}, #{time})
+	</insert>
+	
+	<!-- 根据语料库名称查语料库名称 -->
+	<select id="select" parameterType="SelectWavelistPage" resultType="WaveList">
+		select wavetagger.id, wavetagger.wave, corpus.labelType from wavetagger inner join corpus on wavetagger.corpus = corpus.id 
+		where corpus.id = #{corpus} limit #{start}, #{end}
+	</select>
+	
+	<!-- 根据语料库名称查语料库名称 -->
+	<select id="selectDetail" parameterType="int" resultType="WavetaggerWave">
+		select * from wavetagger where id = #{id}
+	</select>
+	
+	<select id="selectByTrainTestWavetagger" parameterType="int" resultType="WaveList">
+		select id, wave, time from wavetagger where id = #{id}
+	</select>
+	
+	<update id="updateLabeledWavetagger" parameterType="ChangeLabeled">
+		update praat set context = #{result}, other = #{other} where id = #{id}
+	</update>
+	
+	<select id="selectTimeByCorpus" parameterType="int" resultType="double">
+		select time from wavetagger where corpus = #{corpus}
+	</select>
+	
+	<select id="selectTimeById" parameterType="int" resultType="double">
+		select time from wavetagger where id = #{id}
+	</select>
+	
+	<!-- 根据音频位置获取id -->
+	<select id="selectCountByWavePathAndCorpus" parameterType="Wave" resultType="int">
+		select count(id) from wavetagger where wave = #{wave} and corpus = #{corpus}
+	</select>
+	
+	<!-- 获取语料库音频条数 -->
+	<select id="selectCountEveryCorpus" parameterType="int" resultType="int">
+		select count(id) from wavetagger where corpus = #{corpus}
+	</select>
+</mapper> 

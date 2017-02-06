@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.PraatDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<!-- 插入熟语音频数据-->
+	<insert id="insertPraat" parameterType="PraatWave" keyProperty="id">
+		insert into praat(wave, result, starttime, endtime, labelType) 
+		values(#{waveList}, #{result}, #{starttime}, #{endtime}, #{labelType})
+	</insert>
+	
+	<insert id="insertWave" parameterType="WaveTable" keyProperty="id">
+		insert into wave(wave, corpus, length) 
+		values(#{waveList}, #{corpus}, #{length})
+	</insert>
+	
+	<select id="selectIdByWave" parameterType="string" resultType="int">
+		select id from wave where wave = #{wave}
+	</select>
+	
+	<select id="selectByCorpus" parameterType="string" resultType="WaveList">
+		${_parameter}
+	</select>
+	
+	<!-- 获取时长等 -->
+	<select id="selectByTrainTestPraat" parameterType="string" resultType="WaveList">
+		<!-- select id, wave, context from wave where id = #{id} -->
+		select id, wave, ${_parameter}
+	</select>
+	<!-- <select id="selectByTrainTestPraatGender" parameterType="int" resultType="WaveList">
+		select id, wave, gender from wave where id = #{id}
+	</select>
+	<select id="selectByTrainTestPraatEffective" parameterType="int" resultType="WaveList">
+		select id, wave, effective from wave where id = #{id}
+	</select>
+	<select id="selectByTrainTestPraatSpeaker" parameterType="int" resultType="WaveList">
+		select id, wave, speaker from wave where id = #{id}
+	</select>
+	<select id="selectByTrainTestPraatLanguage" parameterType="int" resultType="WaveList">
+		select id, wave, language from wave where id = #{id}
+	</select> -->
+	
+	<select id="selectIdByWaveList" parameterType="GetIdList" resultType="int">
+		select id from praat where wave = #{wave} and labelType = #{labelType}
+	</select>
+	
+	<select id="selectLabelTypeById" parameterType="string" resultType="PraatDetailSelect">
+		select praat.result, praat.starttime, praat.endtime, wave.wave from praat inner join wave on praat.wave = wave.id where praat.id = ${_parameter}
+	</select>
+	
+	<!-- <select id="selectGenderById" parameterType="int" resultType="PraatDetailSelect">
+		select praat.result, praat.starttime, praat.endtime, wave.wave from praat inner join wave on praat.wave = wave.id where praat.id = #{id} and labelType = 1
+	</select>
+	
+	<select id="selectPersonById" parameterType="int" resultType="PraatDetailSelect">
+		select praat.result, praat.starttime, praat.endtime, wave.wave from praat inner join wave on praat.wave = wave.id where praat.id = #{id} and labelType = 2
+	</select>
+	
+	<select id="selectLanguageById" parameterType="int" resultType="PraatDetailSelect">
+		select praat.result, praat.starttime, praat.endtime, wave.wave from praat inner join wave on praat.wave = wave.id where praat.id = #{id} and labelType = 3
+	</select>
+	
+	<select id="selectEffectiveById" parameterType="int" resultType="PraatDetailSelect">
+		select praat.result, praat.starttime, praat.endtime, wave.wave from praat inner join wave on praat.wave = wave.id where praat.id = #{id} and labelType = 4
+	</select> -->
+	
+	<update id="updateLabelType" parameterType="string">
+		update corpus set ${_parameter}
+	</update>
+	
+	<!-- <update id="updateGender" parameterType="int">
+		update corpus set gender = 1 where id = #{id}
+	</update>
+	
+	<update id="updateLanguage" parameterType="int">
+		update corpus set language = 1 where id = #{id}
+	</update>
+	
+	<update id="updatePerson" parameterType="int">
+		update corpus set speaker = 1 where id = #{id}
+	</update>
+	
+	<update id="updateEffective" parameterType="int">
+		update corpus set effective = 1 where id = #{id}
+	</update> -->
+	
+	<update id="updateLabeledPraat" parameterType="ChangeLabeled">
+		update praat set result = #{result} where id = #{id}
+	</update>
+	
+	<update id="updateTimeById" parameterType="WaveList">
+		update wave set time = #{time} where id = #[id}
+	</update>
+	
+	<!-- 获取语料库音频条数 -->
+	<select id="selectCountEveryCorpus" parameterType="int" resultType="int">
+		select count(id) from wave where corpus = #{corpus}
+	</select>
+</mapper> 

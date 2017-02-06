@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.FmtDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<update id="updateTimeById" parameterType="Wave">
+		update corpusFmt set ${_parameter}
+	</update>
+	<!-- <update id="updateTimeByIdGender" parameterType="Wave">
+		update corpusFmt set gender = ${time} where corpus = #{corpus}
+	</update>
+	<update id="updateTimeByIdLanguage" parameterType="Wave">
+		update corpusFmt set language = ${time} where corpus = #{corpus}
+	</update>
+	<update id="updateTimeByIdEffective" parameterType="Wave">
+		update corpusFmt set effective = ${time} where corpus = #{corpus}
+	</update>
+	<update id="updateTimeByIdSpeaker" parameterType="Wave">
+		update corpusFmt set speaker = ${time} where corpus = #{corpus}
+	</update> -->
+	
+	<insert id="insertFmtByCorpus" parameterType="CorpusFmt">
+		insert into corpusFmt(head, code, sample, bitpersamples, channel, corpus) 
+			values(#{head}, #{code}, #{sample}, #{bitpersamples}, #{channel}, #{corpus})
+	</insert>
+	
+</mapper> 

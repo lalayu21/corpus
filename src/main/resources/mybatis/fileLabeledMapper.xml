@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.FileDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<!-- 将标注结果写入数据库fileresult表中 -->
+	<insert id="insert2fileresult" parameterType="FileLabeled">
+		insert into fileresult (result, corpus) 
+		values(#{result}, #{corpus})
+	</insert>
+	
+	<!-- 将文件标注结果插入数据库:名称、时长、标注内容 -->
+	<insert id="insert2file" parameterType="FileLabeled">
+		insert into file (wave, resultID, time, length) 
+		values(#{wave}, #{corpus}, #{time}, #{length})
+	</insert>
+	
+	<!-- 根据标注结果获取标注结果id -->
+	<select id="selectIdByResult" parameterType="fileLabeled" resultType="int">
+		select id from fileresult where result = #{result} and corpus = #{corpus}
+	</select>
+	
+	<!-- 更新fileresult中的时长 -->
+	<update id="updateTimeById" parameterType="fileLabeled">
+		update fileresult set time = time + #{time} where id = #{corpus}
+	</update>
+	
+	<!-- 根据语料库id获取file标注音频列表 -->
+	<select id="selectWavelistByCorpus" parameterType="SelectWavelistPage" resultType="WaveList">
+		select id, wave from file where corpus = #{corpus} limit #{start}, #{end}
+	</select>
+	
+	<!-- 获取某一id对应的音频数据 -->
+	<select id="selectDetail" parameterType="int" resultType="FileLabeled">
+		select wave, context, time from file where id = #{id}
+	</select>
+	<!-- 获取语料库音频条数 -->
+	<select id="selectCountEveryCorpus" parameterType="int" resultType="int">
+		select count(resultID) from file inner join fileresult on file.resultID = fileresult.id where fileresult.corpus = #{corpus}
+	</select>
+	
+	<!-- 获取指定语料库中的所有标注结果 -->
+	<select id="selectLabelResultByCorpus" parameterType="int" resultType="PraatDetailSelect">
+		select id, result from fileresult where corpus = #{corpus}
+	</select>
+	
+</mapper> 

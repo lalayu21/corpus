@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.AttributesDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+	
+	<!-- 查询所有属性 -->
+	<select id="queryAllAttributes" parameterType="String" resultType="Attributes">
+		${ _parameter }
+	</select>
+	
+	<!-- 查询所有属性的属性值 -->
+	<select id="queryAllAttributeValues" parameterType="Integer" resultType="AttributeValues">
+		select * from attribute_values where attrid = #{id}
+	</select>
+	
+	<!-- 查询所有待标注属性 -->
+	<select id="querylabelattr" resultType="attributes">
+		select * from attributes where attrtype=1 or  attrtype=2 and distribased=1
+	</select>
+	
+	<!-- 根据用户名查询task是否存在 -->
+	<select id="queryTaskNum" parameterType="String" resultType="int">
+		select count(id) from tasks where task_name=#{taskname}
+	</select>
+	
+	<!-- 添加新任务 -->
+	<insert id="insertTask" parameterType="Tasks">
+		insert into tasks (ID, task_name, file_path,task_desp,object_num, task_status, pause_status,export_status,grade, create_time,update_time) 
+		VALUES (#{id},#{task_name},#{file_path},#{task_desp}, #{object_num}, #{task_status}, #{pause_status},#{export_status},#{grade}, #{create_time},#{create_time})
+	</insert>
+	
+	<!-- 根据任务名称获取任务信息 -->
+	<select id="selectTaskByName" parameterType="String" resultType="Tasks">
+		select * from tasks where task_name=#{task_name}
+	</select>
+	 	 
+	<!-- 将新任务的已知或者待标注属性写入数据库 -->
+	<insert id="insertAttributes" parameterType="TaskAttrs">
+		insert into task_attrs (task_id,attr_id,attr_value_id,task_type) values(#{task_id},#{attr_id},#{attr_value_id},#{task_type})
+	</insert>
+</mapper> 

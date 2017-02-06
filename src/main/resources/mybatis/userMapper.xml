@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.corpus.dao.UserDao">
+
+	<cache eviction="FIFO" flushInterval="60000" size="500" readOnly="true"></cache>
+
+	<insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		insert into user(username, password, access, gender, idCode, email, tel, truename, applytime) 
+		values(#{username}, #{password}, #{access}, #{gender}, #{idCode}, #{email}, #{tel}, #{truename}, now())
+	</insert>
+	
+	<select id="findById" parameterType="int" resultType="User" useCache="false">
+	    select * from user where id=#{id}
+	</select>
+	
+	<select id="findByUsername" parameterType="String" resultType="User" useCache="false">
+		select * from user where username=#{usernmae}
+	</select>
+	
+	<select id="findByUsernameAndId" parameterType="UsernameAndId" resultType="string" useCache="false">
+		select username from user where username=#{username} and id != #{id}
+	</select>
+	
+	<select id="findAll" resultType="User" useCache="false">
+		select * from user
+	</select>
+	
+	<!-- 获取用户名和密码 -->
+	<select id="selectUserPsw" resultType="User" useCache="false">
+		select username, password from user
+	</select>
+	
+	
+	<update id="updateAccessById" parameterType="int">
+		update user set access = #{access}, committime = now() where id = #{id}
+	</update>
+	
+	<select id="findByAccess" parameterType="int" resultType="User" useCache="false">
+	    select * from user where access=#{access}
+	</select>
+	
+	<select id="updateUser" parameterType="User">
+		update user set username = #{username}, access = #{access}, gender = #{gender}, idCode = #{idCode}, email = #{email}, tel = #{tel}, truename = #{truename} where id = #{id}
+	</select>
+	
+</mapper> 
